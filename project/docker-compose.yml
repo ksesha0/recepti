@@ -1,0 +1,31 @@
+version: '3.1'
+
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: yourusername
+      POSTGRES_PASSWORD: Wordux80@
+      POSTGRES_DB: yourdbname
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U yourusername -d yourdbname"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: yourusername
+      DB_PASSWORD: Wordux80@
+      DB_NAME: yourdbname
